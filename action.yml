@@ -1,0 +1,74 @@
+name: "Blender Extension Build"
+description: "Action to automatically build a Blender extension and store the .zip artifact"
+author: "Kyra Rae"
+inputs:
+  name:
+    description: "Name of the extension. Used for the name of the artifact.
+      If empty, manifest ID name will be used"
+    default: ""
+  version:
+    description: "Version tag used as suffix for the artifact (name-*.*.*.zip)"
+    default: ""
+  build-location:
+    description: "Path to directory which will be zipped"
+    default: "./"
+  checkout:
+    description: "Should the action checkout the repository?"
+    default: "true"
+  exclude-files:
+    description:
+      'List of file paths (relative to build-location) to exclude from the build.
+      Use semicolon as separator e.g. "file1;dir/file2;dir2/file3"'
+    default: ".git"
+outputs:
+  artifact-name:
+    description: "The name of the generated artifact"
+    value: ${{ env.artifact_name }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Repository
+      if: ${{ inputs.checkout == 'true' }}
+      uses: actions/checkout@v4
+
+    - name: Use name from input
+      if: ${{ inputs.name != '' }}
+      run: echo "artifact_name=${{ inputs.name }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Use name from manifest
+      if: ${{ inputs.name == '' }}
+      run: echo "artifact_name=$(grep '^id\s*=' blender_manifest.toml | sed -E 's/id\s*=\s*"(.*)"/\1/')" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Prepare artifact name with version suffix
+      if: ${{ inputs.version != '' }}
+      run: echo "artifact_name=${{ env.artifact_name }}-${{ inputs.version }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Prepare artifact name with version suffix from manifest
+      if: ${{ inputs.version == '' }}
+      run: |
+        EXTRACTED_VER=$(grep '^version\s*=' blender_manifest.toml | sed -E 's/version\s*=\s*"(.*)"/\1/')
+        echo "artifact_name=${{ env.artifact_name }}-$EXTRACTED_VER" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Remove excluded files
+      run: |
+        IFS=';' read -ra FILE_ARRAY <<< "${{ inputs.exclude-files }}"
+        for file in "${FILE_ARRAY[@]}"; do
+          rm -rf ${{ inputs.build-location }}/$file
+        done
+      shell: bash
+
+    - name: Build extension
+      run: |
+        cd ${{ inputs.build-location }}
+        zip -r "$GITHUB_WORKSPACE/${{ env.artifact_name }}.zip" .
+      shell: bash
+
+    - name: Store the build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.artifact_name }}
+        path: ${{ env.artifact_name }}.zip
