@@ -12,7 +12,7 @@ At the end of the process, the action stores the built extension as a `.zip` art
 ### `name`
 
 **Description**: Name of the extension. Used for the name of the artifact.
-If empty, manifest ID name will be used.
+If empty, manifest ID name will be used.  
 **Default**: `''` (empty string)
 
 > [!IMPORTANT]
@@ -20,7 +20,7 @@ If empty, manifest ID name will be used.
 
 ### `version`
 
-**Description**: Version tag used as suffix for the artifact (`name-*.*.*.zip`).
+**Description**: Version tag used as suffix for the artifact (`name-*.*.*.zip`).  
 **Default**: `''` (empty string)
 
 > [!IMPORTANT]
@@ -28,19 +28,19 @@ If empty, manifest ID name will be used.
 
 ### `build-location`
 
-**Description**: Path to the directory which will be zipped to create the artifact.
+**Description**: Path to the directory which will be zipped to create the artifact.  
 **Default**: `'./'` (current directory)
 
 ### `checkout`
 
-**Description**: Determines whether the action should checkout the repository.
+**Description**: Determines whether the action should checkout the repository.  
 **Default**: `'true'`
 
 If you need to checkout the repository before and do some changes, select false so the action does not checkout again and overwrite the files.
 
 ### `exclude-files`
 
-**Description**: A list of file paths, relative to `build-location`, to exclude from the build. Use a semicolon as a separator, e.g., `"file1;dir/file2;dir2/file3"`.
+**Description**: A list of file paths, relative to `build-location`, to exclude from the build. Use a semicolon as a separator, e.g., `"file1;dir/file2;dir2/file3"`.  
 **Default**: `'.git'`
 
 If your repository contains files and/or directories which should not be included in the build, you can specify them here, e.g., `.git;docs;README.md;tests;.github`.
@@ -51,7 +51,7 @@ The following outputs can be accessed via `${{ steps.<step-id>.outputs }}` from 
 
 ### `artifact-name`
 
-**Description**: The name of the generated artifact.
+**Description**: The name of the generated artifact.  
 **Type**: `string`
 
 **How to use it:**
