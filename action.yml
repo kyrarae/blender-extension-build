@@ -29,7 +29,7 @@ runs:
   steps:
     - name: Checkout Repository
       if: ${{ inputs.checkout == 'true' }}
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Use name from input
       if: ${{ inputs.name != '' }}
