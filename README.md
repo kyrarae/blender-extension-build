@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Extension
-        uses: kyrarae/blender-extension-build@main
+        uses: kyrarae/blender-extension-build@v1
         with:
           checkout: 'false'
           exclude-files: '.git;.github;.gitignore'
